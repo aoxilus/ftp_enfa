@@ -1,4 +1,5 @@
-sftp.json ftp/sftp.json
+sftp.json
+ftp/sftp.json
 ftp/*.exe
 ftp/*.log
 config.json
