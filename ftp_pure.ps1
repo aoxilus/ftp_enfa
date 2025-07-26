@@ -39,30 +39,6 @@ function Load-Config {
     return $null
 }
 
-# Función para crear sesión FTP
-function New-FtpSession {
-    param($Config)
-    
-    try {
-        $uri = "ftp://$($Config.host):$($Config.port)$($Config.remotePath)"
-        $credential = New-Object System.Management.Automation.PSCredential($Config.username, (ConvertTo-SecureString $Config.password -AsPlainText -Force))
-        
-        Write-Log "INFO" "Conectando a $($Config.host)..."
-        
-        # Crear sesión FTP usando .NET
-        $ftpRequest = [System.Net.FtpWebRequest]::Create($uri)
-        $ftpRequest.Credentials = $credential
-        $ftpRequest.UsePassive = $Config.passive
-        $ftpRequest.Timeout = $Config.timeout * 1000
-        
-        return $ftpRequest
-    }
-    catch {
-        Write-Log "ERROR" "Error creando sesión FTP: $($_.Exception.Message)"
-        return $null
-    }
-}
-
 # Función para listar archivos
 function Get-FtpFiles {
     param($Config)
@@ -183,6 +159,36 @@ function Set-FtpFile {
     }
 }
 
+# Función para borrar archivo
+function Remove-FtpFile {
+    param($Config, $FileName)
+    
+    try {
+        $remoteFile = "$($Config.remotePath)/$FileName"
+        
+        $uri = "ftp://$($Config.host):$($Config.port)$remoteFile"
+        $credential = New-Object System.Management.Automation.PSCredential($Config.username, (ConvertTo-SecureString $Config.password -AsPlainText -Force))
+        
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($uri)
+        $ftpRequest.Credentials = $credential
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::DeleteFile
+        $ftpRequest.UsePassive = $Config.passive
+        $ftpRequest.Timeout = $Config.timeout * 1000
+        
+        Write-Log "INFO" "Borrando: $remoteFile"
+        
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+        
+        Write-Log "SUCCESS" "Archivo borrado exitosamente"
+        return $true
+    }
+    catch {
+        Write-Log "ERROR" "Error borrando archivo: $($_.Exception.Message)"
+        return $false
+    }
+}
+
 # Función para probar conexión
 function Test-FtpConnection {
     param($Config)
@@ -219,11 +225,13 @@ function Show-Help {
     Write-Host "  list                    - Listar archivos del servidor"
     Write-Host "  download <archivo>      - Descargar archivo específico"
     Write-Host "  upload <archivo>        - Subir archivo específico"
+    Write-Host "  delete <archivo>        - Borrar archivo específico"
     Write-Host "  test                    - Probar conexión`n"
     Write-Host "Ejemplos:"
     Write-Host "  .\ftp_pure.ps1 list"
     Write-Host "  .\ftp_pure.ps1 download archivo.php"
     Write-Host "  .\ftp_pure.ps1 upload archivo.php"
+    Write-Host "  .\ftp_pure.ps1 delete archivo.php"
     Write-Host "  .\ftp_pure.ps1 test"
 }
 
@@ -264,6 +272,14 @@ function Main {
                 $success = Set-FtpFile -Config $config -FileName $File
             } else {
                 Write-Log "ERROR" "Comando upload requiere nombre de archivo"
+                Show-Help
+            }
+        }
+        "delete" {
+            if ($File) {
+                $success = Remove-FtpFile -Config $config -FileName $File
+            } else {
+                Write-Log "ERROR" "Comando delete requiere nombre de archivo"
                 Show-Help
             }
         }

@@ -1,51 +1,47 @@
-# FTP Client Tool v2.0 - Cliente FTP Robusto
+# FTP Client v2.0 - Cliente FTP Robusto
+Ar
+Cliente FTP simple y eficiente para Windows. Sin dependencias externas, solo PowerShell nativo o C++ compilado.
 
-Herramienta FTP mejorada para Windows con manejo robusto de errores, timeouts configurables y comandos adicionales.
+## 🚀 Características
 
-## 🚀 Características Nuevas
-
-### ✅ Mejoras de Estabilidad
-- **Manejo de errores mejorado** - No falla silenciosamente
-- **Timeouts configurables** - Se adapta a diferentes conexiones
-- **Parsing JSON robusto** - Usa regex para mayor confiabilidad
-- **Logging con timestamps** - Mejor debugging
-
-### ✅ Nuevos Comandos
-- `delete <archivo>` - Borrar archivo específico
-- `delete-all` - Borrar todos los archivos recursivamente
-- `rmdir <directorio>` - Borrar directorio remoto
-- `test` - Probar conexión sin hacer nada
-
-### ✅ Configuración Flexible
-- Múltiples ubicaciones de config: `config.json`, `.ftp/config.json`, `ftp_config.json`
-- Configuración de puerto personalizable
-- Modo pasivo/activo configurable
-- Timeouts personalizables
+- ✅ **Conexión estable** - Manejo robusto de errores
+- ✅ **Timeouts configurables** - Se adapta a conexiones lentas
+- ✅ **Logging detallado** - Timestamps y debugging completo
+- ✅ **Dos versiones** - PowerShell puro y C++ compilado
+- ✅ **Configuración flexible** - JSON simple y claro
 
 ## 📁 Archivos
 
-- `ftp_client_v2.cpp` - Código fuente mejorado en C++
-- `ftp_client_v2.exe` - Ejecutable compilado con MinGW
-- `ftp_pure.ps1` - Cliente FTP puro en PowerShell (recomendado)
+- `ftp_pure.ps1` - Cliente PowerShell (recomendado)
+- `ftp_client_v2.cpp` - Código fuente C++
+- `ftp_client_v2.exe` - Ejecutable compilado
 - `config.json` - Configuración de conexión
-- `config_v2.json` - Configuración de ejemplo
 - `build.bat` - Script de compilación
-- `ftp.ps1` - Wrapper de PowerShell para el ejecutable
-- `ftp.log` - Log de operaciones
 
-## 🔧 Instalación
+## 🔧 Uso Rápido
 
-### Opción 1: PowerShell (Recomendado - No requiere compilación)
+### PowerShell (Recomendado)
 ```powershell
-# Habilitar ejecución de scripts
+# Habilitar scripts
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
-# Usar directamente
+# Probar conexión
 .\ftp_pure.ps1 test
+
+# Listar archivos
 .\ftp_pure.ps1 list
+
+# Subir archivo
+.\ftp_pure.ps1 upload archivo.txt
+
+# Descargar archivo
+.\ftp_pure.ps1 download archivo.txt
+
+# Borrar archivo
+.\ftp_pure.ps1 delete archivo.txt
 ```
 
-### Opción 2: C++ Compilado
+### C++ Compilado
 ```cmd
 # Compilar
 build.bat
@@ -53,65 +49,13 @@ build.bat
 # Usar
 .\ftp_client_v2.exe test
 .\ftp_client_v2.exe list
-```
-
-## 🎯 Uso
-
-### Comandos Básicos
-```cmd
-# Probar conexión
-ftp_client_v2.exe test
-.\ftp_pure.ps1 test
-
-# Listar archivos
-ftp_client_v2.exe list
-.\ftp_pure.ps1 list
-
-# Descargar todo
-ftp_client_v2.exe download-all
-
-# Subir todo  
-ftp_client_v2.exe upload-all
-
-# Borrar todo
-ftp_client_v2.exe delete-all
-```
-
-### Comandos Específicos
-```cmd
-# Archivo específico
-ftp_client_v2.exe download archivo.php
-ftp_client_v2.exe upload archivo.php
-ftp_client_v2.exe delete archivo.php
-
-# Directorios
-ftp_client_v2.exe mkdir nuevo_directorio
-ftp_client_v2.exe rmdir directorio_viejo
-```
-
-### PowerShell (Recomendado)
-```powershell
-# Usar wrapper
-.\ftp.ps1 list
-.\ftp.ps1 download-all
-.\ftp.ps1 upload-all
-.\ftp.ps1 delete-all
-.\ftp.ps1 download archivo.php
-```
-
-## 🔍 Logging
-
-Todas las operaciones se registran en `ftp.log` con timestamps:
-```
-[2025-01-27 10:30:15] [INFO] Conectando a servidor.com...
-[2025-01-27 10:30:16] [INFO] Conexión FTP establecida
-[2025-01-27 10:30:17] [INFO] [FILE] index.php -> /public_html/index.php
-[2025-01-27 10:30:18] [SUCCESS] Operación completada exitosamente
+.\ftp_client_v2.exe upload archivo.txt
+.\ftp_client_v2.exe download archivo.txt
 ```
 
 ## ⚙️ Configuración
 
-### Configuración Básica
+Edita `config.json`:
 ```json
 {
     "host": "tu-servidor.com",
@@ -125,75 +69,30 @@ Todas las operaciones se registran en `ftp.log` con timestamps:
 }
 ```
 
-### Configuración Avanzada
-```json
-{
-    "timeout": 60,        // 60 segundos para conexiones lentas
-    "passive": false,     // Modo activo para algunos servidores
-    "port": 2121         // Puerto FTP alternativo
-}
+## 📊 Comandos Disponibles
+
+| Comando | Descripción |
+|---------|-------------|
+| `test` | Probar conexión |
+| `list` | Listar archivos |
+| `upload <archivo>` | Subir archivo |
+| `download <archivo>` | Descargar archivo |
+| `delete <archivo>` | Borrar archivo |
+
+## 🔍 Logs
+
+Todas las operaciones se registran en `ftp.log`:
 ```
-
-## 🛠️ Compilación Manual
-
-Si tienes MinGW-W64 instalado:
-```cmd
-g++ -std=c++17 -O2 -Wall -o ftp_client_v2.exe ftp_client_v2.cpp -lwininet
+[2025-01-27 10:30:15] [INFO] Conectando a servidor.com...
+[2025-01-27 10:30:16] [SUCCESS] Conexión exitosa
 ```
-
-## 🔒 Seguridad
-
-- `config.json` está excluido del control de versiones
-- Las credenciales nunca se suben a GitHub
-- Logs detallados para debugging
 
 ## 🐛 Solución de Problemas
 
-### Error de Conexión
-1. Verifica credenciales en `config.json`
-2. Prueba con `.\ftp_pure.ps1 test`
-3. Revisa `ftp.log` para errores específicos
-
-### Timeouts
-1. Aumenta `timeout` en la configuración
-2. Verifica conexión a internet
-3. Prueba modo pasivo/activo
-
-### Archivos No Encontrados
-1. Verifica `remotePath` y `localPath`
-2. Usa `list` para ver contenido del servidor
-3. Revisa permisos de archivos
-
-## 📊 Comparación v1 vs v2
-
-| Característica | v1.03 | v2.0 |
-|---|---|---|
-| Manejo de errores | Básico | Robusto |
-| Timeouts | Fijos | Configurables |
-| Comandos | 6 | 10 |
-| Logging | Simple | Con timestamps |
-| Configuración | Rígida | Flexible |
-| Borrado recursivo | ❌ | ✅ |
-| Prueba de conexión | ❌ | ✅ |
-| Cliente PowerShell | ❌ | ✅ |
-
-## 🎯 Próximas Mejoras
-
-- [ ] Sincronización inteligente (solo archivos modificados)
-- [ ] Compresión automática
-- [ ] Interfaz gráfica simple
-- [ ] Soporte para SFTP
-- [ ] Backup automático antes de borrar
-
-## ✅ Estado Actual
-
-- ✅ Conexión FTP funcionando
-- ✅ Listado de archivos funcionando
-- ✅ Cliente PowerShell puro funcionando
-- ✅ Cliente C++ compilado funcionando
-- ✅ Configuración flexible funcionando
-- ✅ Logging detallado funcionando
+1. **Error de conexión**: Verifica credenciales en `config.json`
+2. **Timeouts**: Aumenta `timeout` en la configuración
+3. **Modo pasivo**: Cambia `passive` a `true` o `false`
 
 ---
 
-**Hecho por aoxilus** - Cliente FTP simple, robusto y sin dependencias innecesarias. 
+**Hecho por aoxilus** - Simple, rápido, eficiente. 
