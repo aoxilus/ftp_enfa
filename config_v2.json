@@ -1,0 +1,18 @@
+{
+    "host": "tu-servidor.com",
+    "username": "tu-usuario",
+    "password": "tu-password",
+    "remotePath": "/public_html",
+    "localPath": ".",
+    "port": 21,
+    "timeout": 30,
+    "passive": true,
+    "exclude": [
+        "node_modules",
+        "vendor",
+        ".git",
+        ".vscode",
+        "ftp.log",
+        "*.exe"
+    ]
+} 

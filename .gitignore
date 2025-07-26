@@ -1,6 +1,21 @@
+# Archivos de configuración sensibles
 sftp.json
 ftp/sftp.json
-ftp/*.exe
-ftp/*.log
 config.json
+ftp_config.json
+
+# Ejecutables
+ftp/*.exe
+*.exe
+
+# Logs
+ftp/*.log
+*.log
+
+# Archivos de compilación
 *.obj
+*.o
+
+# Archivos temporales
+*.tmp
+*.temp
