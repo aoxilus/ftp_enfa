@@ -1,66 +1,72 @@
-# FTP Client v2.0 - Cliente FTP Robusto
-Ar
-Cliente FTP simple y eficiente para Windows. Sin dependencias externas, solo PowerShell nativo o C++ compilado.
+# FTP Client v2.0 - Terminal FTP Solution for AI Developers 🥑
 
-## 🚀 Características
+> **Made by Aoxilus** - Because sometimes you just need to upload files without the GUI drama! 🎯
 
-- ✅ **Conexión estable** - Manejo robusto de errores
-- ✅ **Timeouts configurables** - Se adapta a conexiones lentas
-- ✅ **Logging detallado** - Timestamps y debugging completo
-- ✅ **Dos versiones** - PowerShell puro y C++ compilado
-- ✅ **Configuración flexible** - JSON simple y claro
+A simple, efficient FTP client for Windows. No external dependencies, just native PowerShell or compiled C++. Perfect for developers using AI tools like Cursor AI who need a terminal solution for file uploads.
 
-## 📁 Archivos
+## 🚀 Features
 
-- `ftp_pure.ps1` - Cliente PowerShell (recomendado)
-- `ftp_client_v2.cpp` - Código fuente C++
-- `ftp_client_v2.exe` - Ejecutable compilado
-- `config.json` - Configuración de conexión
-- `build.bat` - Script de compilación
+- ✅ **Stable connection** - Robust error handling
+- ✅ **Configurable timeouts** - Adapts to slow connections
+- ✅ **Detailed logging** - Timestamps and complete debugging
+- ✅ **Two versions** - Pure PowerShell and compiled C++
+- ✅ **Flexible configuration** - Simple and clear JSON
+- ✅ **Directory upload** - Upload entire folders with one command
 
-## 🔧 Uso Rápido
+## 📁 Files
 
-### PowerShell (Recomendado)
+- `ftp_pure.ps1` - PowerShell client (recommended)
+- `ftp_client_v2.cpp` - C++ source code
+- `ftp_client_v2.exe` - Compiled executable
+- `config.json` - Connection configuration
+- `build.bat` - Compilation script
+
+## 🔧 Quick Start
+
+### PowerShell (Recommended)
 ```powershell
-# Habilitar scripts
+# Enable scripts
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
-# Probar conexión
+# Test connection
 .\ftp_pure.ps1 test
 
-# Listar archivos
+# List files
 .\ftp_pure.ps1 list
 
-# Subir archivo
-.\ftp_pure.ps1 upload archivo.txt
+# Upload single file
+.\ftp_pure.ps1 upload file.txt
 
-# Descargar archivo
-.\ftp_pure.ps1 download archivo.txt
+# Upload entire directory
+.\ftp_pure.ps1 upload-dir my_project
 
-# Borrar archivo
-.\ftp_pure.ps1 delete archivo.txt
+# Download file
+.\ftp_pure.ps1 download file.txt
+
+# Delete file
+.\ftp_pure.ps1 delete file.txt
 ```
 
-### C++ Compilado
+### C++ Compiled
 ```cmd
-# Compilar
+# Compile
 build.bat
 
-# Usar
+# Use
 .\ftp_client_v2.exe test
 .\ftp_client_v2.exe list
-.\ftp_client_v2.exe upload archivo.txt
-.\ftp_client_v2.exe download archivo.txt
+.\ftp_client_v2.exe upload file.txt
+.\ftp_client_v2.exe download file.txt
 ```
 
-## ⚙️ Configuración
+## ⚙️ Configuration
 
-Edita `config.json`:
+Edit `config.json`:
 ```json
 {
-    "host": "tu-servidor.com",
-    "username": "tu-usuario",
-    "password": "tu-password",
+    "host": "your-server.com",
+    "username": "your-username",
+    "password": "your-password",
     "remotePath": "",
     "localPath": ".",
     "port": 21,
@@ -69,30 +75,85 @@ Edita `config.json`:
 }
 ```
 
-## 📊 Comandos Disponibles
+## 📊 Available Commands
 
-| Comando | Descripción |
+| Command | Description |
 |---------|-------------|
-| `test` | Probar conexión |
-| `list` | Listar archivos |
-| `upload <archivo>` | Subir archivo |
-| `download <archivo>` | Descargar archivo |
-| `delete <archivo>` | Borrar archivo |
+| `test` | Test connection |
+| `list` | List files |
+| `upload <file>` | Upload single file |
+| `upload-dir <directory>` | Upload entire directory |
+| `download <file>` | Download file |
+| `delete <file>` | Delete file |
 
 ## 🔍 Logs
 
-Todas las operaciones se registran en `ftp.log`:
+All operations are logged in `ftp.log`:
 ```
-[2025-01-27 10:30:15] [INFO] Conectando a servidor.com...
-[2025-01-27 10:30:16] [SUCCESS] Conexión exitosa
+[2025-01-27 10:30:15] [INFO] Connecting to server.com...
+[2025-01-27 10:30:16] [SUCCESS] Connection successful
 ```
 
-## 🐛 Solución de Problemas
+## 🐛 Troubleshooting
 
-1. **Error de conexión**: Verifica credenciales en `config.json`
-2. **Timeouts**: Aumenta `timeout` en la configuración
-3. **Modo pasivo**: Cambia `passive` a `true` o `false`
+1. **Connection error**: Check credentials in `config.json`
+2. **Timeouts**: Increase `timeout` in configuration
+3. **Passive mode**: Change `passive` to `true` or `false`
+
+## 🎭 Why PowerShell is More Portable?
+
+> **Joke**: Why did the C++ developer go broke? Because he spent all his money on dependencies! 😂
+
+### PowerShell Advantages:
+- ✅ **No compilation needed** - Works directly on any Windows
+- ✅ **Native dependencies** - Uses .NET Framework (included)
+- ✅ **Easy distribution** - Just copy the .ps1 file
+- ✅ **Quick modifications** - Edit → Test immediately
+- ✅ **Universal compatibility** - Windows 7+ to Windows 11
+
+### When to use each:
+
+**PowerShell (.ps1) - Recommended for:**
+- ✅ Fast development
+- ✅ Testing and debugging
+- ✅ Simple distribution
+- ✅ Frequent modifications
+- ✅ Various Windows environments
+
+**C++ (.exe) - Better for:**
+- ✅ Maximum performance
+- ✅ Final distribution
+- ✅ Non-technical users
+- ✅ Controlled environments
+
+## 🥑 The Avocado Story
+
+> **Fun fact**: This FTP client is like an avocado - simple on the outside, powerful on the inside, and perfect for developers who want to "upload their guacamole" to the server! 🥑
+
+## 🎯 Perfect for AI Developers
+
+- **Cursor AI integration**: Use with your AI coding assistant
+- **Terminal workflow**: No GUI distractions
+- **Script automation**: Easy to integrate into your workflow
+- **Quick file management**: Perfect for rapid development cycles
+
+## 🚀 Directory Upload Example
+
+```powershell
+# Upload your entire project
+.\ftp_pure.ps1 upload-dir my_awesome_project
+
+# Upload specific folder
+.\ftp_pure.ps1 upload-dir src
+```
+
+## 💡 Pro Tips
+
+1. **Use PowerShell for development** - Faster iteration
+2. **Use C++ for production** - Better performance
+3. **Check logs** - Always check `ftp.log` for debugging
+4. **Test connection first** - Always run `test` before uploading
 
 ---
 
-**Hecho por aoxilus** - Simple, rápido, eficiente. 
+**Made by Aoxilus** - Simple, fast, efficient. Like an avocado, but for FTP! 🥑⚡ 

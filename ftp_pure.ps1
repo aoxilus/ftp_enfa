@@ -39,6 +39,78 @@ function Load-Config {
     return $null
 }
 
+# Función para crear directorio remoto
+function New-FtpDirectory {
+    param($Config, $DirectoryName)
+    
+    try {
+        $remoteDir = "$($Config.remotePath)/$DirectoryName"
+        
+        $uri = "ftp://$($Config.host):$($Config.port)$remoteDir"
+        $credential = New-Object System.Management.Automation.PSCredential($Config.username, (ConvertTo-SecureString $Config.password -AsPlainText -Force))
+        
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($uri)
+        $ftpRequest.Credentials = $credential
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+        $ftpRequest.UsePassive = $Config.passive
+        $ftpRequest.Timeout = $Config.timeout * 1000
+        
+        Write-Log "INFO" "Creando directorio: $remoteDir"
+        
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+        
+        Write-Log "SUCCESS" "Directorio creado exitosamente"
+        return $true
+    }
+    catch {
+        Write-Log "ERROR" "Error creando directorio: $($_.Exception.Message)"
+        return $false
+    }
+}
+
+# Función para subir directorio completo
+function Set-FtpDirectory {
+    param($Config, $DirectoryName)
+    
+    try {
+        $localDir = "$($Config.localPath)\$DirectoryName"
+        
+        if (-not (Test-Path $localDir)) {
+            Write-Log "ERROR" "Directorio local no encontrado: $localDir"
+            return $false
+        }
+        
+        if (-not (Test-Path $localDir -PathType Container)) {
+            Write-Log "ERROR" "No es un directorio: $localDir"
+            return $false
+        }
+        
+        Write-Log "INFO" "Subiendo directorio completo: $localDir"
+        
+        # Crear directorio remoto
+        if (-not (New-FtpDirectory -Config $Config -DirectoryName $DirectoryName)) {
+            return $false
+        }
+        
+        # Subir todos los archivos del directorio
+        $files = Get-ChildItem -Path $localDir -File
+        foreach ($file in $files) {
+            $success = Set-FtpFile -Config $Config -FileName "$DirectoryName\$($file.Name)"
+            if (-not $success) {
+                Write-Log "ERROR" "Error subiendo archivo: $($file.Name)"
+            }
+        }
+        
+        Write-Log "SUCCESS" "Directorio subido exitosamente"
+        return $true
+    }
+    catch {
+        Write-Log "ERROR" "Error subiendo directorio: $($_.Exception.Message)"
+        return $false
+    }
+}
+
 # Función para listar archivos
 function Get-FtpFiles {
     param($Config)
@@ -225,12 +297,14 @@ function Show-Help {
     Write-Host "  list                    - Listar archivos del servidor"
     Write-Host "  download <archivo>      - Descargar archivo específico"
     Write-Host "  upload <archivo>        - Subir archivo específico"
+    Write-Host "  upload-dir <directorio> - Subir directorio completo"
     Write-Host "  delete <archivo>        - Borrar archivo específico"
     Write-Host "  test                    - Probar conexión`n"
     Write-Host "Ejemplos:"
     Write-Host "  .\ftp_pure.ps1 list"
     Write-Host "  .\ftp_pure.ps1 download archivo.php"
     Write-Host "  .\ftp_pure.ps1 upload archivo.php"
+    Write-Host "  .\ftp_pure.ps1 upload-dir mi_proyecto"
     Write-Host "  .\ftp_pure.ps1 delete archivo.php"
     Write-Host "  .\ftp_pure.ps1 test"
 }
@@ -272,6 +346,14 @@ function Main {
                 $success = Set-FtpFile -Config $config -FileName $File
             } else {
                 Write-Log "ERROR" "Comando upload requiere nombre de archivo"
+                Show-Help
+            }
+        }
+        "upload-dir" {
+            if ($File) {
+                $success = Set-FtpDirectory -Config $config -DirectoryName $File
+            } else {
+                Write-Log "ERROR" "Comando upload-dir requiere nombre de directorio"
                 Show-Help
             }
         }
