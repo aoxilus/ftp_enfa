@@ -261,6 +261,112 @@ function Remove-FtpFile {
     }
 }
 
+# Función para borrar directorio completo
+function Remove-FtpDirectory {
+    param($Config, $DirectoryName)
+    
+    try {
+        $remoteDir = "$($Config.remotePath)/$DirectoryName"
+        
+        Write-Log "INFO" "Borrando directorio completo: $remoteDir"
+        
+        # Primero listar archivos del directorio
+        $uri = "ftp://$($Config.host):$($Config.port)$remoteDir"
+        $credential = New-Object System.Management.Automation.PSCredential($Config.username, (ConvertTo-SecureString $Config.password -AsPlainText -Force))
+        
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($uri)
+        $ftpRequest.Credentials = $credential
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
+        $ftpRequest.UsePassive = $Config.passive
+        $ftpRequest.Timeout = $Config.timeout * 1000
+        
+        $response = $ftpRequest.GetResponse()
+        $stream = $response.GetResponseStream()
+        $reader = New-Object System.IO.StreamReader($stream)
+        
+        $files = $reader.ReadToEnd() -split "`r`n" | Where-Object { $_ -ne "" -and $_ -ne "." -and $_ -ne ".." }
+        
+        $reader.Close()
+        $response.Close()
+        
+        # Borrar todos los archivos del directorio
+        foreach ($file in $files) {
+            $success = Remove-FtpFile -Config $Config -FileName "$DirectoryName/$file"
+            if (-not $success) {
+                Write-Log "ERROR" "Error borrando archivo: $file"
+            }
+        }
+        
+        # Ahora borrar el directorio vacío
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($uri)
+        $ftpRequest.Credentials = $credential
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::RemoveDirectory
+        $ftpRequest.UsePassive = $Config.passive
+        $ftpRequest.Timeout = $Config.timeout * 1000
+        
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+        
+        Write-Log "SUCCESS" "Directorio borrado exitosamente"
+        return $true
+    }
+    catch {
+        Write-Log "ERROR" "Error borrando directorio: $($_.Exception.Message)"
+        return $false
+    }
+}
+
+# Función para borrar todo del servidor
+function Remove-FtpAll {
+    param($Config)
+    
+    try {
+        Write-Log "INFO" "Borrando todo del servidor..."
+        
+        # Listar todos los archivos y directorios
+        $uri = "ftp://$($Config.host):$($Config.port)$($Config.remotePath)"
+        $credential = New-Object System.Management.Automation.PSCredential($Config.username, (ConvertTo-SecureString $Config.password -AsPlainText -Force))
+        
+        $ftpRequest = [System.Net.FtpWebRequest]::Create($uri)
+        $ftpRequest.Credentials = $credential
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
+        $ftpRequest.UsePassive = $Config.passive
+        $ftpRequest.Timeout = $Config.timeout * 1000
+        
+        $response = $ftpRequest.GetResponse()
+        $stream = $response.GetResponseStream()
+        $reader = New-Object System.IO.StreamReader($stream)
+        
+        $items = $reader.ReadToEnd() -split "`r`n" | Where-Object { $_ -ne "" -and $_ -ne "." -and $_ -ne ".." }
+        
+        $reader.Close()
+        $response.Close()
+        
+        # Borrar cada item
+        foreach ($item in $items) {
+            Write-Log "INFO" "Borrando: $item"
+            
+            # Intentar borrar como archivo primero
+            $success = Remove-FtpFile -Config $Config -FileName $item
+            if (-not $success) {
+                # Si falla, intentar como directorio
+                $success = Remove-FtpDirectory -Config $Config -DirectoryName $item
+            }
+            
+            if (-not $success) {
+                Write-Log "ERROR" "No se pudo borrar: $item"
+            }
+        }
+        
+        Write-Log "SUCCESS" "Todo borrado del servidor"
+        return $true
+    }
+    catch {
+        Write-Log "ERROR" "Error borrando todo: $($_.Exception.Message)"
+        return $false
+    }
+}
+
 # Función para probar conexión
 function Test-FtpConnection {
     param($Config)
@@ -299,6 +405,8 @@ function Show-Help {
     Write-Host "  upload <archivo>        - Subir archivo específico"
     Write-Host "  upload-dir <directorio> - Subir directorio completo"
     Write-Host "  delete <archivo>        - Borrar archivo específico"
+    Write-Host "  delete-dir <directorio> - Borrar directorio completo"
+    Write-Host "  delete-all              - Borrar todo del servidor"
     Write-Host "  test                    - Probar conexión`n"
     Write-Host "Ejemplos:"
     Write-Host "  .\ftp_pure.ps1 list"
@@ -306,6 +414,8 @@ function Show-Help {
     Write-Host "  .\ftp_pure.ps1 upload archivo.php"
     Write-Host "  .\ftp_pure.ps1 upload-dir mi_proyecto"
     Write-Host "  .\ftp_pure.ps1 delete archivo.php"
+    Write-Host "  .\ftp_pure.ps1 delete-dir mi_proyecto"
+    Write-Host "  .\ftp_pure.ps1 delete-all"
     Write-Host "  .\ftp_pure.ps1 test"
 }
 
@@ -364,6 +474,17 @@ function Main {
                 Write-Log "ERROR" "Comando delete requiere nombre de archivo"
                 Show-Help
             }
+        }
+        "delete-dir" {
+            if ($File) {
+                $success = Remove-FtpDirectory -Config $config -DirectoryName $File
+            } else {
+                Write-Log "ERROR" "Comando delete-dir requiere nombre de directorio"
+                Show-Help
+            }
+        }
+        "delete-all" {
+            $success = Remove-FtpAll -Config $config
         }
         "test" {
             $success = Test-FtpConnection -Config $config
