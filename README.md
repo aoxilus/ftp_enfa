@@ -155,4 +155,8 @@ All operations are logged in `ftp.log`:
 
 ---
 
-**Made with 🥑 by [aoxilus](https://github.com/aoxilus)** — simple, fast, efficient. Like an avocado, but for FTP! 🥑⚡ 
+**Made with 🥑 by [aoxilus](https://github.com/aoxilus)** — simple, fast, efficient. Like an avocado, but for FTP! 🥑⚡
+
+## License / Licencia
+
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) — Attribution-NonCommercial-ShareAlike. See [LICENSE](LICENSE).
