@@ -2,7 +2,7 @@
 
 > **Made by Aoxilus** - Because sometimes you just need to upload files without the GUI drama! 🎯
 
-A simple, efficient FTP client for Windows. No external dependencies, just native PowerShell or compiled C++. Perfect for developers using AI tools like Cursor AI who need a terminal solution for file uploads.
+A simple, efficient FTP client for Windows. No external dependencies, just native PowerShell or compiled C++. Built for a terminal workflow when you need to upload files without a GUI.
 
 ## 🚀 Features
 
@@ -130,12 +130,11 @@ All operations are logged in `ftp.log`:
 
 > **Fun fact**: This FTP client is like an avocado - simple on the outside, powerful on the inside, and perfect for developers who want to "upload their guacamole" to the server! 🥑
 
-## 🎯 Perfect for AI Developers
+## 🎯 Terminal workflow
 
-- **Cursor AI integration**: Use with your AI coding assistant
-- **Terminal workflow**: No GUI distractions
-- **Script automation**: Easy to integrate into your workflow
-- **Quick file management**: Perfect for rapid development cycles
+- **No GUI**: stay in the terminal
+- **Script automation**: easy to drop into your own scripts
+- **Quick file management**: fast upload/download cycles
 
 ## 🚀 Directory Upload Example
 
@@ -156,4 +155,4 @@ All operations are logged in `ftp.log`:
 
 ---
 
-**Made by Aoxilus** - Simple, fast, efficient. Like an avocado, but for FTP! 🥑⚡ 
+**Made with 🥑 by [aoxilus](https://github.com/aoxilus)** — simple, fast, efficient. Like an avocado, but for FTP! 🥑⚡ 
